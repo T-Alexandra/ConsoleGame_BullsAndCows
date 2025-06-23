@@ -22,6 +22,7 @@ class Program
 
             int bulls = CountBulls(num, guess);
             int cows = CountCows(num, guess) - bulls;
+
             if (bulls == 4)
             {
                 Console.WriteLine("Победа! 🐂🐄");
@@ -29,7 +30,10 @@ class Program
             }
             else
             {
-                Console.WriteLine($"Попытка {attempt}: {guess} 🐂 Быков: {bulls}, 🐄 Коров: {cows}");
+                string bullsIcons = string.Concat(Enumerable.Repeat("🐂", bulls));
+                string cowsIcons = string.Concat(Enumerable.Repeat("🐄", cows));
+
+                Console.WriteLine($"Попытка {attempt}: {guess} -{((bulls == 0 && cows == 0) ? "":"")}{bullsIcons}{cowsIcons} ({bulls} бык{CorrectLangRu(bulls, cows).Item1},{cows} коров{CorrectLangRu(bulls, cows).Item2})");
             }
         }
 
@@ -71,6 +75,14 @@ class Program
         }
         return cows;
     }
-    
+    static (string, string) CorrectLangRu(int bulls, int cows)
+    {
+        string bull = (bulls == 1) ? "" : (bulls == 0 ? "ов" : "а");
+        string cow = (cows == 1) ? "а" : (cows == 0 ? "" : "ы"); ;
+
+        return (bull, cow);
+
+    }
+
 
 }
