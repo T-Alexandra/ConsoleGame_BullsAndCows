@@ -1,0 +1,24 @@
+# Файлы IDE (Visual Studio / Rider)
+.vs/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.DotSettings.user
+
+# Результаты сборки
+bin/
+obj/
+[Bb]uild/
+[Ll]og/
+*.exe
+*.dll
+*.pdb
+
+# Конфиденциальные и локальные настройки
+appsettings.Development.json
+secrets.json
+
+# Конфигурация локального запуска
+Properties/launchSettings.json
