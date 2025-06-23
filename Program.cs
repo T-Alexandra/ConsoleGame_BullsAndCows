@@ -9,10 +9,58 @@ class Program
 
         Console.WriteLine("Быки и коровы! 🐂🐄");
         Console.WriteLine("Правила:\nЭто логическая игра, в которой компьютер загадывает число из разных цифр, а игрок пытается его угадать.\nПосле каждой попытки игрок получает подсказку: количество быков 🐂 (верная цифра и позиция) и коров 🐄 (верная цифра, но не позиция). Цель — угадать число, получив 4 быка.\n");
+        Console.WriteLine("Нажмите любую клавишу для продолжения");
+        Console.ReadKey();
 
+        while (true)
+        {
+            Console.Clear();
+            Console.WriteLine("🐂 Выбор режима:\n");
+            Console.WriteLine("1. Легчайший режим (бесконечные попытки)");
+            Console.WriteLine("2. Классика (10 попыток)");
+            Console.WriteLine("3. Пользовательский (задайте кол-во попыток)");
+            Console.WriteLine("4. Инверсия (вы загадываете число, компьютер угадывает)");
+            Console.Write("\nВведите номер режима (1–4): ");
+
+            string input = Console.ReadLine()?.Trim();
+
+            switch (input)
+            {
+                case "1":
+                    AllModes(1);
+                    break;
+                case "2":
+                    AllModes(2);
+                    break;
+                case "3":
+                    AllModes(3);
+                    break;
+                case "4":
+                    //InverseMode();
+                    break;
+                default:
+                    Console.WriteLine("Неверный выбор. Нажмите любую клавишу и попробуйте снова.");
+                    Console.ReadKey();
+                    continue;
+            }
+
+            Console.Write("\nХотите сыграть снова? (yes): ");
+            var answer = Console.ReadLine()?.Trim().ToLower();
+            if (answer != "yes")
+                break;
+        }
+
+
+
+    }
+
+    static void AllModes(int mode)
+    {
+        int maxatt = mode == 2 || mode == 1 ? 10 : GetMaxAttem();
+        Console.Clear();
+        Console.WriteLine($"Запущен {(mode == 1 ? "легкий" : (mode == 2 ? "классический" : "пользовательский"))} режим");
         string num = GenerateNumber();
         int attempt = 0;
-
         Console.WriteLine(num);//ТЕСТ!!!!!!!!!!!!!!
 
         while (true)
@@ -22,10 +70,19 @@ class Program
 
             int bulls = CountBulls(num, guess);
             int cows = CountCows(num, guess) - bulls;
-
             if (bulls == 4)
             {
                 Console.WriteLine("Победа! 🐂🐄");
+                Console.WriteLine("Нажмите любую клавишу для продолжения");
+                Console.ReadKey();
+                break;
+            }
+            else if (attempt == maxatt && mode != 1)
+            {
+                Console.WriteLine("Поражение( 🐂🐄");
+                Console.WriteLine($"Загаданное число: {num}");
+                Console.WriteLine("Нажмите любую клавишу для продолжения");
+                Console.ReadKey();
                 break;
             }
             else
@@ -33,16 +90,43 @@ class Program
                 string bullsIcons = string.Concat(Enumerable.Repeat("🐂", bulls));
                 string cowsIcons = string.Concat(Enumerable.Repeat("🐄", cows));
 
-                Console.WriteLine($"Попытка {attempt}: {guess} -{((bulls == 0 && cows == 0) ? "":"")}{bullsIcons}{cowsIcons} ({bulls} бык{CorrectLangRu(bulls, cows).Item1},{cows} коров{CorrectLangRu(bulls, cows).Item2})");
+                Console.WriteLine($"Попытка {attempt}: {guess} -{((bulls == 0 && cows == 0) ? "" : "")}{bullsIcons}{cowsIcons} ({bulls} бык{CorrectLangRu(bulls, cows).Item1},{cows} коров{CorrectLangRu(bulls, cows).Item2})");
             }
         }
-
     }
+
+
+
+
     static string GenerateNumber()
     {
         int[] data = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
         Random.Shared.Shuffle(data);
         return string.Concat(data.Take(4));
+    }
+    static int GetMaxAttem()
+    {
+        while (true)
+        {
+            Console.Write("Введите количество попыток: ");
+            string? input = Console.ReadLine()?.Trim();
+
+            if (!int.TryParse(input, out int attempts))
+            {
+                Console.Clear();
+                Console.WriteLine("Введите целое число.\n");
+                continue;
+            }
+            if (attempts <= 0)
+            {
+                Console.Clear();
+                Console.WriteLine("Количество попыток должно быть больше нуля.\n");
+                continue;
+            }
+
+            return attempts;
+
+        }
     }
     static string GetUserGuess()
     {
@@ -65,7 +149,6 @@ class Program
         }
         return bulls;
     }
-
     static int CountCows(string num, string guess)
     {
         int cows = 0;
@@ -81,8 +164,6 @@ class Program
         string cow = (cows == 1) ? "а" : (cows == 0 ? "" : "ы"); ;
 
         return (bull, cow);
-
     }
-
 
 }
