@@ -20,6 +20,6 @@
 ---
 
 Как запустить:
-- **Клонируйте репозиторий:**
-- **Перейдите в каталог проекта::**
+- **Клонируйте репозиторий:** git clone https://github.com/T-Alexandra/ConsoleGame_BullsAndCows.git
+- **Перейдите в каталог проекта:** cd ConsoleGame_BullsAndCows
 - **Запустите:** dotnet run
