@@ -36,7 +36,7 @@ class Program
                     AllModes(3);
                     break;
                 case "4":
-                    //InverseMode();
+                    InverseMode();
                     break;
                 default:
                     Console.WriteLine("Неверный выбор. Нажмите любую клавишу и попробуйте снова.");
@@ -54,6 +54,29 @@ class Program
 
     }
 
+    static void Recur(List<int> current, bool[] used, List<string> result)
+    {
+        if (current.Count == 4)
+        {
+            result.Add(string.Join("", current));
+            return;
+        }
+
+        for (int i = 0; i < 10; i++)
+        {
+            if (!used[i])
+            {
+                used[i] = true;
+                current.Add(i);
+
+                Recur(current, used, result);
+
+                used[i] = false;
+                current.RemoveAt(current.Count - 1);
+            }
+        }
+    }
+
     static void AllModes(int mode)
     {
         int maxatt = mode == 2 || mode == 1 ? 10 : GetMaxAttem();
@@ -61,7 +84,7 @@ class Program
         Console.WriteLine($"Запущен {(mode == 1 ? "легкий" : (mode == 2 ? "классический" : "пользовательский"))} режим");
         string num = GenerateNumber();
         int attempt = 0;
-        Console.WriteLine(num);//ТЕСТ!!!!!!!!!!!!!!
+        //Console.WriteLine(num);//ТЕСТ!!!!!!!!!!!!!!
 
         while (true)
         {
@@ -69,7 +92,7 @@ class Program
             attempt++;
 
             int bulls = CountBulls(num, guess);
-            int cows = CountCows(num, guess) - bulls;
+            int cows = CountCows(num, guess);
             if (bulls == 4)
             {
                 Console.WriteLine("Победа! 🐂🐄");
@@ -94,8 +117,80 @@ class Program
             }
         }
     }
+    static void InverseMode()
+    {
+        List<string> result = new List<string>();
+        List<int> current = new List<int>();
+        bool[] used = new bool[10];
+        Recur(current, used, result);
+
+        Console.Clear();
+        Console.WriteLine("Запущен режим инверсия");
+        Console.WriteLine("Загадайте число\n");
+        int attempt = 1;
+
+        Console.WriteLine($"Попытка {attempt}: 0123");
+        string guess = "0123";
+        (int bulls, int cows) = GetBullsAndCows();
+        if (bulls == 4)
+        {
+            Console.WriteLine("Число угадано!");
+            return;
+        }
+        result = result.Where(num =>
+            CountBulls(num, guess) == bulls &&
+            CountCows(num, guess) == cows).ToList();
+        while (true)
+        {
+            attempt++;
+            if (result.Count == 0)
+            {
+                Console.WriteLine("Ошибка");
+                break;
+            }
+            guess = result[0];
+
+            Console.WriteLine($"Попытка {attempt}: {guess}");
+            (bulls, cows) = GetBullsAndCows();
+            if (bulls == 4)
+            {
+                Console.WriteLine("Число угадано!");
+                break;
+            }
+            result = result.Where(num =>
+                CountBulls(num, guess) == bulls &&
+                CountCows(num, guess) == cows).ToList();
+        }
 
 
+    }
+
+    static (int bulls, int cows) GetBullsAndCows()
+    {
+        while (true)
+        {
+            int bulls;
+            int cows;
+            Console.Write("🐂 Введите количество быков: ");
+            if (!int.TryParse(Console.ReadLine()?.Trim(), out bulls) && bulls >= 0 && bulls <= 4)
+            {
+                Console.WriteLine("Неверный ввод: введите целые числа от 0 до 4\n");
+                continue;
+            }
+            Console.Write("🐄 Введите количество коров: ");
+            if (!int.TryParse(Console.ReadLine()?.Trim(), out cows) && cows >= 0 && cows <= 4)
+            {
+                Console.WriteLine("Неверный ввод: введите целые числа от 0 до 4\n");
+                continue;
+            }
+            if (bulls + cows > 4)
+            {
+                Console.WriteLine("Сумма быков и коров не может превышать 4\n");
+                continue;
+            }
+            return (bulls, cows);
+        }
+    }
 
 
     static string GenerateNumber()
@@ -154,7 +249,7 @@ class Program
         int cows = 0;
         for (int i = 0; i < 4; i++)
         {
-            if (guess.Contains(num[i])) cows++;
+            if (guess.Contains(num[i])&&num[i] != guess[i]) cows++;
         }
         return cows;
     }
